@@ -5,6 +5,7 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  Text,
   Button,
 } from 'react-native';
 import Auth0 from 'react-native-auth0';
@@ -16,12 +17,18 @@ const auth0 = new Auth0({
 
 const App = () => {
   const [auth, setAuth] = useState(null);
-  console.log(auth);
+  const [userInfo, setUserInfo] = useState(null);
+  console.log(auth, userInfo);
 
   const logIn = () => {
     auth0.webAuth
       .authorize({scope: 'openid profile email'})
-      .then(credentials => setAuth(credentials))
+      .then(credentials => {
+        setAuth(credentials);
+        auth0.auth
+          .userInfo({token: credentials.accessToken})
+          .then(user => setUserInfo(user));
+      })
       .catch(error => console.log(error));
   };
 
@@ -41,6 +48,16 @@ const App = () => {
             <Button onPress={logIn} title="Log In" />
           ) : (
             <Button onPress={logOut} title="Log Out" />
+          )}
+
+          {userInfo && (
+            <View>
+              <Text>Email: {userInfo.email}</Text>
+              <Text>Name: {userInfo.name}</Text>
+              <Text>Nickname: {userInfo.nickname}</Text>
+              <Text>Sub: {userInfo.sub}</Text>
+              <Text>Updated At: {userInfo.updatedAt}</Text>
+            </View>
           )}
         </View>
       </ScrollView>
