@@ -35,7 +35,10 @@ const App = () => {
   const logOut = () => {
     auth0.webAuth
       .clearSession({})
-      .then(() => setAuth(null))
+      .then(() => {
+        setAuth(null);
+        setUserInfo(null);
+      })
       .catch(error => console.log('Error: ', error));
   };
 
