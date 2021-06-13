@@ -1,12 +1,9 @@
 import React, {useState} from 'react';
-import type {Node} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
-  useColorScheme,
   View,
   Button,
 } from 'react-native';
@@ -17,30 +14,22 @@ const auth0 = new Auth0({
   clientId: 'BkbzakXDcbYnltwoM4tyKHGrm1z6YM9M',
 });
 
-const App: () => Node = () => {
+const App = () => {
   const [auth, setAuth] = useState(null);
   console.log(auth);
 
   const logIn = () => {
     auth0.webAuth
       .authorize({scope: 'openid profile email'})
-      .then(credentials =>
-        // Successfully authenticated
-        // Store the accessToken
-        setAuth(credentials),
-      )
+      .then(credentials => setAuth(credentials))
       .catch(error => console.log(error));
   };
 
   const logOut = () => {
     auth0.webAuth
       .clearSession({})
-      .then(success => {
-        setAuth(null);
-      })
-      .catch(error => {
-        console.log('Log out cancelled');
-      });
+      .then(() => setAuth(null))
+      .catch(error => console.log('Error: ', error));
   };
 
   return (
